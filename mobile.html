@@ -204,18 +204,8 @@
   /* Adjust main for bottom tabs */
   .main { bottom: calc(50px + var(--safe-bottom)); }
 
-  /* Desktop redirect notice */
-  @media (min-width: 769px) {
-    .mobile-only { display: none !important; }
-    .desktop-notice {
-      display: flex; align-items: center; justify-content: center;
-      height: 100vh; text-align: center; padding: 40px;
-    }
-    .desktop-notice a { color: var(--honda-red); font-weight: 600; }
-  }
-  @media (max-width: 768px) {
-    .desktop-notice { display: none !important; }
-  }
+  /* Desktop notice - always hidden, mobile UI always shown */
+  .desktop-notice { display: none !important; }
 
   /* RTL support */
   [dir="rtl"] .tree-item.level-1 { padding-left: 14px; padding-right: 28px; }
