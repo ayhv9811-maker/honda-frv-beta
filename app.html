@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Honda FR-V Service Manual</title>
+<script src="./he_data.js"></script>
+<style>
+:root {
+  --red: #CC0000;
+  --dark: #1a1a2e;
+  --darker: #12121f;
+  --bg: #f2f2f7;
+  --card: #ffffff;
+  --border: #dddde3;
+  --text: #1c1c2e;
+  --muted: #6b6b80;
+  --header-h: 52px;
+  --sidebar-w: 340px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body { height:100%; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--text); overflow:hidden; }
+
+/* === HEADER === */
+.header {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  height:var(--header-h); background:var(--dark);
+  display:flex; align-items:center; padding:0 12px;
+  box-shadow:0 1px 8px rgba(0,0,0,0.2);
+}
+.logo { width:30px; height:30px; background:var(--red); border-radius:6px; display:flex; align-items:center; justify-content:center; color:white; font-weight:800; font-size:13px; margin-right:10px; flex-shrink:0; }
+.hdr-text { flex:1; }
+.hdr-title { color:white; font-size:14px; font-weight:600; }
+.hdr-sub { color:rgba(255,255,255,0.5); font-size:11px; }
+.hdr-btn {
+  height:32px; padding:0 10px; border:none; border-radius:6px; background:rgba(255,255,255,0.1);
+  color:white; font-size:12px; font-weight:600; cursor:pointer; margin-left:6px; font-family:inherit;
+}
+.hdr-btn:hover { background:rgba(255,255,255,0.18); }
+.hdr-btn.lang { background:var(--red); }
+
+/* === MODEL BAR === */
+.model-bar {
+  position:fixed; top:var(--header-h); left:0; right:0; z-index:190;
+  height:42px; background:var(--darker); display:flex; align-items:center; padding:0 12px; gap:8px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.model-bar label { color:rgba(255,255,255,0.5); font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+.model-bar select {
+  height:28px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.1);
+  border-radius:5px; color:white; font-size:12px; padding:0 6px; font-family:inherit;
+}
+.model-bar .sep { width:1px; height:20px; background:rgba(255,255,255,0.1); }
+.manual-toggle { display:flex; gap:2px; background:rgba(255,255,255,0.06); border-radius:5px; padding:2px; }
+.manual-toggle button {
+  height:24px; padding:0 8px; border:none; border-radius:4px; background:transparent;
+  color:rgba(255,255,255,0.5); font-size:11px; font-weight:600; cursor:pointer; font-family:inherit;
+}
+.manual-toggle button.active { background:var(--red); color:white; }
+
+/* === LAYOUT === */
+.main { position:fixed; top:94px; left:0; right:0; bottom:0; display:flex; }
+
+/* Sidebar (tree nav) */
+.sidebar {
+  width:var(--sidebar-w); min-width:var(--sidebar-w); height:100%;
+  background:var(--card); border-right:1px solid var(--border);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.search-box {
+  padding:8px 10px; border-bottom:1px solid var(--border); flex-shrink:0;
+}
+.search-input {
+  width:100%; height:34px; border:1px solid var(--border); border-radius:7px;
+  padding:0 10px 0 32px; font-size:13px; background:var(--bg); font-family:inherit;
+  outline:none;
+}
+.search-input:focus { border-color:var(--red); box-shadow:0 0 0 2px rgba(204,0,0,0.1); }
+.search-wrap { position:relative; }
+.search-icon { position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:14px; color:var(--muted); pointer-events:none; }
+.tree-scroll { flex:1; overflow-y:auto; overflow-x:hidden; }
+
+/* Tree items */
+.tree-group { border-bottom:1px solid var(--border); }
+.tree-item {
+  padding:9px 10px 9px 14px; cursor:pointer; display:flex; align-items:center;
+  font-size:13px; line-height:1.3; border-bottom:1px solid rgba(0,0,0,0.03);
+  transition:background 0.1s;
+}
+.tree-item:hover { background:rgba(204,0,0,0.04); }
+.tree-item.active { background:rgba(204,0,0,0.08); color:var(--red); font-weight:600; }
+.tree-item.level-0 { font-weight:600; font-size:13px; }
+.tree-item.level-1 { padding-left:28px; font-size:12.5px; }
+.tree-item.level-2 { padding-left:42px; font-size:12px; color:var(--muted); }
+.tree-name { flex:1; }
+.tree-name-en { font-size:10px; color:var(--muted); margin-top:1px; }
+.tree-chevron { color:var(--muted); font-size:11px; margin-left:6px; flex-shrink:0; }
+
+/* Content area */
+.content-area { flex:1; height:100%; display:flex; flex-direction:column; overflow:hidden; }
+
+/* Articles panel */
+.articles-panel {
+  flex:1; overflow-y:auto; overflow-x:hidden; padding:0;
+  display:none;
+}
+.articles-panel.visible { display:block; }
+.articles-header { padding:12px 16px 8px; font-size:13px; color:var(--muted); font-weight:500; }
+.article-card {
+  padding:10px 16px; border-bottom:1px solid var(--border); cursor:pointer;
+  transition:background 0.1s;
+}
+.article-card:hover { background:rgba(204,0,0,0.04); }
+.article-title-he { font-size:13px; font-weight:500; direction:rtl; text-align:right; }
+.article-title-en { font-size:11px; color:var(--muted); margin-top:2px; }
+.article-title-only { font-size:13px; font-weight:500; }
+.article-meta { font-size:10px; color:var(--muted); margin-top:2px; }
+.empty-msg { padding:40px 20px; text-align:center; color:var(--muted); }
+.empty-msg h3 { font-size:15px; margin-bottom:6px; color:var(--text); }
+
+/* Content viewer */
+.viewer-panel { flex:1; display:none; flex-direction:column; }
+.viewer-panel.visible { display:flex; }
+.viewer-bar {
+  height:40px; display:flex; align-items:center; padding:0 12px;
+  background:var(--card); border-bottom:1px solid var(--border); flex-shrink:0;
+}
+.viewer-back { border:none; background:none; font-size:13px; color:var(--red); cursor:pointer; font-weight:600; font-family:inherit; padding:4px 8px; border-radius:4px; }
+.viewer-back:hover { background:rgba(204,0,0,0.08); }
+.viewer-title { flex:1; font-size:12px; color:var(--muted); text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; padding:0 8px; }
+.viewer-frame { flex:1; border:none; width:100%; }
+
+/* Welcome state */
+.welcome { flex:1; display:flex; align-items:center; justify-content:center; text-align:center; padding:40px; color:var(--muted); }
+.welcome h2 { font-size:18px; color:var(--text); margin-bottom:8px; }
+.welcome p { font-size:13px; }
+
+/* === MOBILE === */
+@media (max-width: 768px) {
+  .main { flex-direction:column; }
+  .sidebar { width:100%; min-width:100%; border-right:none; }
+  .content-area { position:fixed; top:94px; left:0; right:0; bottom:0; background:var(--bg); z-index:150; transform:translateX(100%); transition:transform 0.25s ease; }
+  .content-area.slide-in { transform:translateX(0); }
+  .model-bar { overflow-x:auto; }
+  .hdr-title { font-size:13px; }
+  --sidebar-w: 100%;
+}
+
+/* RTL */
+[dir="rtl"] .tree-item.level-1 { padding-left:10px; padding-right:28px; }
+[dir="rtl"] .tree-item.level-2 { padding-left:10px; padding-right:42px; }
+[dir="rtl"] .tree-chevron { margin-left:0; margin-right:6px; }
+[dir="rtl"] .search-input { padding:0 32px 0 10px; }
+[dir="rtl"] .search-icon { left:auto; right:10px; }
+[dir="rtl"] .article-title-en { text-align:left; direction:ltr; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-thumb { background:rgba(0,0,0,0.15); border-radius:3px; }
+
+.count-badge { font-size:11px; color:var(--muted); padding:8px 16px; }
+
+/* Loading spinner */
+.loading { padding:40px; text-align:center; color:var(--muted); }
+.spinner { width:24px; height:24px; border:2px solid var(--border); border-top-color:var(--red); border-radius:50%; animation:spin 0.6s linear infinite; margin:0 auto 10px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">H</div>
+  <div class="hdr-text">
+    <div class="hdr-title" id="hdrTitle">FR-V Shop Manual</div>
+    <div class="hdr-sub" id="hdrSub">Honda (2004-2009)</div>
+  </div>
+  <button class="hdr-btn lang" id="langBtn" onclick="toggleLang()">עברית</button>
+</div>
+
+<!-- Model selector bar -->
+<div class="model-bar">
+  <label id="lblYear">Year</label>
+  <select id="selYear" onchange="onModelChange()">
+    <option value="2005">2005</option>
+    <option value="2006">2006</option>
+    <option value="2007" selected>2007</option>
+  </select>
+  <label id="lblCode">Code</label>
+  <select id="selCode" onchange="onModelChange()"></select>
+  <div class="sep"></div>
+  <div class="manual-toggle">
+    <button id="btnSM" class="active" onclick="setManual('SM')">SM</button>
+    <button id="btnBRM" onclick="setManual('BRM')">BRM</button>
+  </div>
+</div>
+
+<!-- Main layout -->
+<div class="main" id="mainContainer">
+  <!-- Sidebar: tree + search -->
+  <div class="sidebar" id="sidebar">
+    <div class="search-box">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="searchInput" placeholder="Search articles..." oninput="onSearch()">
+      </div>
+    </div>
+    <div class="tree-scroll" id="treeScroll"></div>
+  </div>
+
+  <!-- Content area: articles list + viewer -->
+  <div class="content-area" id="contentArea">
+    <!-- Articles list -->
+    <div class="articles-panel" id="articlesPanel">
+      <div id="articlesContainer"></div>
+    </div>
+    <!-- Content viewer -->
+    <div class="viewer-panel" id="viewerPanel">
+      <div class="viewer-bar">
+        <button class="viewer-back" onclick="closeViewer()">◀ <span id="backLabel">Back</span></button>
+        <div class="viewer-title" id="viewerTitle"></div>
+      </div>
+      <iframe class="viewer-frame" id="viewerFrame" sandbox="allow-same-origin allow-scripts"></iframe>
+    </div>
+    <!-- Welcome -->
+    <div class="welcome" id="welcomePanel">
+      <div>
+        <h2 id="welcomeTitle">Select a category</h2>
+        <p id="welcomeText">Choose a system or component from the navigation tree to view service articles.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// === CONFIG ===
+const modelConfig = { '2005':['BE1','BE3'], '2006':['BE1','BE3','BE5'], '2007':['BE1','BE5'] };
+const codeNames = { 'BE1':'BE1 (1.7L)', 'BE3':'BE3 (2.0L i-VTEC)', 'BE5':'BE5 (2.2L i-CDTi)' };
+
+let currentYear = '2007', currentCode = 'BE1', currentManual = 'SM';
+let treeData = [], articleData = [];
+let lang = 'en';
+let isMobile = window.innerWidth <= 768;
+
+// === INIT ===
+document.addEventListener('DOMContentLoaded', function() {
+  updateCodeSelector();
+  loadData();
+  
+  // Load saved language
+  try { if (localStorage.getItem('esm_lang_he') === '1') { lang = 'he'; applyLang(); } } catch(e) {}
+});
+
+window.addEventListener('resize', function() { isMobile = window.innerWidth <= 768; });
+
+// === MODEL SELECTION ===
+function updateCodeSelector() {
+  const sel = document.getElementById('selCode');
+  const codes = modelConfig[document.getElementById('selYear').value] || ['BE1'];
+  sel.innerHTML = '';
+  codes.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c; o.textContent = codeNames[c] || c;
+    sel.appendChild(o);
+  });
+  if (codes.includes(currentCode)) sel.value = currentCode;
+  else { currentCode = codes[0]; sel.value = currentCode; }
+}
+
+function onModelChange() {
+  updateCodeSelector();
+  currentYear = document.getElementById('selYear').value;
+  currentCode = document.getElementById('selCode').value;
+  loadData();
+}
+
+function setManual(type) {
+  currentManual = type;
+  document.getElementById('btnSM').classList.toggle('active', type === 'SM');
+  document.getElementById('btnBRM').classList.toggle('active', type === 'BRM');
+  loadData();
+}
+
+// === DATA LOADING ===
+async function loadData() {
+  const prefix = currentManual === 'SM' ? 'SMT' : 'BRT';
+  const artPrefix = currentManual === 'SM' ? 'SML' : 'BRL';
+  
+  document.getElementById('treeScroll').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  showWelcome();
+  
+  try {
+    const [treeResp, artResp] = await Promise.all([
+      fetch('en/html/' + prefix + '_' + currentCode + '_' + currentYear + '.html'),
+      fetch('en/html/' + artPrefix + '_' + currentCode + '_' + currentYear + '.html')
+    ]);
+    treeData = parseTree(await treeResp.text());
+    articleData = parseArticles(await artResp.text());
+    renderTree();
+  } catch(e) {
+    document.getElementById('treeScroll').innerHTML = '<div class="empty-msg"><h3>Error</h3><p>' + e.message + '</p></div>';
+  }
+}
+
+function parseTree(html) {
+  const items = [];
+  const re = /SearchTreeItem\((\d+),"([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"\)/g;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    items.push({ level:+m[1], sitq:m[2], sct:m[3], sc:m[4], sys:m[5], comp:m[6], supp:m[7], name:m[8] });
+  }
+  return items;
+}
+
+function parseArticles(html) {
+  const items = [];
+  let m;
+  const r1 = /SieTitleItem\("([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"\)/g;
+  while ((m = r1.exec(html)) !== null) items.push({ sieKey:m[1], contentsNum:m[2], symbol:m[3], title:m[4], subTitle:m[5], dgc:m[6] });
+  const r2 = /SieDTCTitleItem\("([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)","([^"]*?)"\)/g;
+  while ((m = r2.exec(html)) !== null) items.push({ sieKey:m[1], contentsNum:m[2], symbol:m[3], title:m[4], subTitle:m[5], dgc:m[6] });
+  return items;
+}
+
+// === TREE RENDERING ===
+function renderTree() {
+  const c = document.getElementById('treeScroll');
+  if (!treeData.length) { c.innerHTML = '<div class="empty-msg"><h3>No data</h3></div>'; return; }
+  
+  let html = '';
+  for (let i = 0; i < treeData.length; i++) {
+    const it = treeData[i];
+    const he = trTree(it.name);
+    const showBoth = lang === 'he' && he !== it.name;
+    
+    html += '<div class="tree-item level-' + it.level + '" data-i="' + i + '" onclick="onTreeClick(' + i + ')">';
+    if (showBoth) {
+      html += '<div class="tree-name"><div>' + he + '</div><div class="tree-name-en">' + it.name + '</div></div>';
+    } else {
+      html += '<span class="tree-name">' + (lang === 'he' ? he : it.name) + '</span>';
+    }
+    html += '<span class="tree-chevron">›</span></div>';
+  }
+  c.innerHTML = html;
+}
+
+// === TREE CLICK → ARTICLES ===
+function onTreeClick(idx) {
+  // Highlight active
+  document.querySelectorAll('.tree-item.active').forEach(el => el.classList.remove('active'));
+  const el = document.querySelector('.tree-item[data-i="' + idx + '"]');
+  if (el) el.classList.add('active');
+  
+  const item = treeData[idx];
+  const filtered = filterArticles(item);
+  showArticles(item.name, filtered);
+}
+
+function filterArticles(ti) {
+  if (!articleData) return [];
+  return articleData.filter(art => {
+    const s = art.sieKey;
+    if (s.length < 25) return false;
+    const aSct=s[7], aSc=s.substring(8,11), aSys=s.substring(11,14), aComp=s.substring(14,19), aSitq=s.substring(19,21);
+    
+    if (ti.sct && ti.sct !== '') { if (!matchFilter(ti.sct, aSct)) return false; }
+    if (ti.sc && ti.sc !== '') { if (!matchFilter(ti.sc, aSc)) return false; }
+    if (ti.sys && ti.sys !== '') { if (!matchFilter(ti.sys, aSys)) return false; }
+    if (ti.comp && ti.comp !== '') { if (ti.comp !== aComp.substring(0, ti.comp.length)) return false; }
+    if (ti.sitq && ti.sitq !== '') { if (!matchFilterWild(ti.sitq, aSitq)) return false; }
+    return true;
+  });
+}
+
+function matchFilter(filter, val) {
+  const parts = filter.split(',');
+  let hasPositive = false, matched = false;
+  for (const p of parts) {
+    if (!p) continue;
+    if (p[0] === '!') { if (p.substring(1) === val) return false; }
+    else { hasPositive = true; if (p === val) matched = true; }
+  }
+  return !hasPositive || matched;
+}
+
+function matchFilterWild(filter, val) {
+  const parts = filter.split(',');
+  let hasPositive = false, matched = false;
+  for (const p of parts) {
+    if (!p) continue;
+    const neg = p[0] === '!';
+    const pat = neg ? p.substring(1) : p;
+    let m = true;
+    for (let i = 0; i < pat.length && i < val.length; i++) {
+      if (pat[i] !== '?' && pat[i] !== val[i]) { m = false; break; }
+    }
+    if (neg) { if (m) return false; }
+    else { hasPositive = true; if (m) matched = true; }
+  }
+  return !hasPositive || matched;
+}
+
+// === ARTICLES LIST ===
+function showArticles(treeName, articles) {
+  const panel = document.getElementById('articlesPanel');
+  const container = document.getElementById('articlesContainer');
+  
+  document.getElementById('welcomePanel').style.display = 'none';
+  document.getElementById('viewerPanel').classList.remove('visible');
+  panel.classList.add('visible');
+  
+  if (isMobile) {
+    document.getElementById('contentArea').classList.add('slide-in');
+  }
+  
+  if (!articles.length) {
+    container.innerHTML = '<div class="empty-msg"><h3>' + tr('No Articles') + '</h3><p>' + tr('Try selecting a more specific category.') + '</p></div>';
+    return;
+  }
+  
+  let html = '<div class="count-badge">' + articles.length + ' ' + (articles.length !== 1 ? tr('articles') : tr('article')) + '</div>';
+  
+  articles.forEach(art => {
+    const he = trTitle(art.title);
+    const showBoth = lang === 'he' && he !== art.title;
+    const esc = art.title.replace(/'/g, "\\'");
+    
+    html += '<div class="article-card" onclick="openViewer(\'' + art.contentsNum + '\',\'' + esc + '\')">';
+    if (showBoth) {
+      html += '<div class="article-title-he">' + he + '</div>';
+      html += '<div class="article-title-en">' + art.title + '</div>';
+    } else {
+      html += '<div class="article-title-only">' + (lang === 'he' ? he : art.title) + '</div>';
+    }
+    html += '</div>';
+  });
+  
+  container.innerHTML = html;
+  container.parentElement.scrollTop = 0;
+}
+
+// === CONTENT VIEWER ===
+function openViewer(contentsNum, title) {
+  const vp = document.getElementById('viewerPanel');
+  const ap = document.getElementById('articlesPanel');
+  
+  const he = trTitle(title);
+  document.getElementById('viewerTitle').textContent = (lang === 'he' && he !== title) ? he : title;
+  
+  const frame = document.getElementById('viewerFrame');
+  frame.src = 'en/html/' + contentsNum + '.html';
+  
+  ap.classList.remove('visible');
+  vp.classList.add('visible');
+  
+  frame.onload = function() {
+    try {
+      const doc = frame.contentDocument;
+      if (frame.contentWindow) {
+        frame.contentWindow.Old = function(){};
+        frame.contentWindow.parent = { Old:function(){}, Cts:function(k,a){ openViewer(k,k); }, Tsl:function(){}, document:{ESM:{}} };
+      }
+      const style = doc.createElement('style');
+      style.textContent = 'body{font-size:14px!important;margin:10px!important;font-family:-apple-system,sans-serif!important;word-wrap:break-word!important}img{max-width:100%!important;height:auto!important}table{max-width:100%!important;font-size:12px!important}svg{max-width:100%!important;height:auto!important}.top_title{font-size:18px!important;font-weight:700!important}';
+      doc.head.appendChild(style);
+    } catch(e) {}
+  };
+}
+
+function closeViewer() {
+  document.getElementById('viewerPanel').classList.remove('visible');
+  document.getElementById('articlesPanel').classList.add('visible');
+}
+
+function showWelcome() {
+  document.getElementById('welcomePanel').style.display = 'flex';
+  document.getElementById('articlesPanel').classList.remove('visible');
+  document.getElementById('viewerPanel').classList.remove('visible');
+  if (isMobile) document.getElementById('contentArea').classList.remove('slide-in');
+}
+
+// Mobile back
+function mobileBack() {
+  if (document.getElementById('viewerPanel').classList.contains('visible')) {
+    closeViewer();
+  } else {
+    document.getElementById('contentArea').classList.remove('slide-in');
+    document.getElementById('articlesPanel').classList.remove('visible');
+    showWelcome();
+  }
+}
+
+// === SEARCH ===
+let searchTimer = null;
+function onSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(doSearch, 250);
+}
+
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  if (q.length < 2) { renderTree(); return; }
+  if (!articleData) return;
+  
+  // Search in both English titles and Hebrew translations
+  const matches = articleData.filter(art => {
+    if (art.title.toLowerCase().includes(q)) return true;
+    if (art.subTitle && art.subTitle.toLowerCase().includes(q)) return true;
+    const he = trTitle(art.title);
+    if (he && he.toLowerCase().includes(q)) return true;
+    return false;
+  });
+  
+  const c = document.getElementById('treeScroll');
+  if (!matches.length) { c.innerHTML = '<div class="empty-msg"><h3>' + tr('No Results') + '</h3></div>'; return; }
+  
+  let html = '<div class="count-badge">' + matches.length + ' ' + tr('results') + '</div>';
+  matches.slice(0, 80).forEach(art => {
+    const he = trTitle(art.title);
+    const showBoth = lang === 'he' && he !== art.title;
+    const esc = art.title.replace(/'/g, "\\'");
+    
+    html += '<div class="article-card" onclick="openFromSearch(\'' + art.contentsNum + '\',\'' + esc + '\')">';
+    if (showBoth) {
+      html += '<div class="article-title-he">' + he + '</div>';
+      html += '<div class="article-title-en">' + art.title + '</div>';
+    } else {
+      html += '<div class="article-title-only">' + art.title + '</div>';
+    }
+    html += '</div>';
+  });
+  if (matches.length > 80) html += '<div class="count-badge">' + tr('Showing first 80 of') + ' ' + matches.length + '</div>';
+  c.innerHTML = html;
+}
+
+function openFromSearch(contentsNum, title) {
+  document.getElementById('welcomePanel').style.display = 'none';
+  document.getElementById('articlesPanel').classList.remove('visible');
+  document.getElementById('viewerPanel').classList.add('visible');
+  if (isMobile) document.getElementById('contentArea').classList.add('slide-in');
+  
+  const he = trTitle(title);
+  document.getElementById('viewerTitle').textContent = (lang === 'he' && he !== title) ? he : title;
+  
+  const frame = document.getElementById('viewerFrame');
+  frame.src = 'en/html/' + contentsNum + '.html';
+  frame.onload = function() {
+    try {
+      const doc = frame.contentDocument;
+      if (frame.contentWindow) {
+        frame.contentWindow.Old = function(){};
+        frame.contentWindow.parent = { Old:function(){}, Cts:function(k){ openViewer(k,k); }, Tsl:function(){}, document:{ESM:{}} };
+      }
+      const style = doc.createElement('style');
+      style.textContent = 'body{font-size:14px!important;margin:10px!important;font-family:-apple-system,sans-serif!important;word-wrap:break-word!important}img{max-width:100%!important;height:auto!important}table{max-width:100%!important;font-size:12px!important}svg{max-width:100%!important;height:auto!important}';
+      doc.head.appendChild(style);
+    } catch(e) {}
+  };
+}
+
+// === HEBREW TRANSLATION ===
+function trTree(name) {
+  if (lang !== 'he' || typeof TREE_HE === 'undefined') return name;
+  return TREE_HE[name] || name;
+}
+
+function trTitle(title) {
+  if (lang !== 'he' || typeof TITLE_HE === 'undefined') return title;
+  return TITLE_HE[title] || title;
+}
+
+function tr(key) {
+  if (lang !== 'he') return key;
+  const map = {
+    'Year':'שנה','Code':'קוד','articles':'מאמרים','article':'מאמר','results':'תוצאות',
+    'No Articles':'אין מאמרים','No Results':'אין תוצאות','Back':'חזור',
+    'Try selecting a more specific category.':'נסה לבחור קטגוריה ספציפית יותר.',
+    'Search articles...':'חיפוש מאמרים...','Showing first 80 of':'מציג 80 ראשונים מתוך',
+    'Select a category':'בחר קטגוריה','Choose a system or component from the navigation tree to view service articles.':'בחר מערכת או רכיב מעץ הניווט כדי לצפות במאמרי שירות.'
+  };
+  return map[key] || key;
+}
+
+function toggleLang() {
+  lang = lang === 'en' ? 'he' : 'en';
+  try { localStorage.setItem('esm_lang_he', lang === 'he' ? '1' : '0'); } catch(e) {}
+  applyLang();
+}
+
+function applyLang() {
+  const isHe = lang === 'he';
+  document.getElementById('langBtn').textContent = isHe ? 'EN' : 'עברית';
+  document.getElementById('mainContainer').setAttribute('dir', isHe ? 'rtl' : 'ltr');
+  document.getElementById('hdrTitle').textContent = isHe ? 'מדריך שירות FR-V' : 'FR-V Shop Manual';
+  document.getElementById('hdrSub').textContent = isHe ? 'הונדה (2004-2009)' : 'Honda (2004-2009)';
+  document.getElementById('lblYear').textContent = tr('Year');
+  document.getElementById('lblCode').textContent = tr('Code');
+  document.getElementById('searchInput').placeholder = tr('Search articles...');
+  document.getElementById('backLabel').textContent = tr('Back');
+  document.getElementById('welcomeTitle').textContent = tr('Select a category');
+  document.getElementById('welcomeText').textContent = tr('Choose a system or component from the navigation tree to view service articles.');
+  
+  renderTree();
+}
+
+// Mobile back button (browser)
+window.addEventListener('popstate', function() {
+  if (isMobile && document.getElementById('contentArea').classList.contains('slide-in')) {
+    mobileBack();
+  }
+});
+</script>
+</body>
+</html>
