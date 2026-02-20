@@ -221,7 +221,7 @@ html, body { height:100%; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI
         <button class="viewer-back" onclick="closeViewer()">◀ <span>חזור</span></button>
         <div class="viewer-title" id="viewerTitle"></div>
       </div>
-      <iframe class="viewer-frame" id="viewerFrame" sandbox="allow-same-origin allow-scripts"></iframe>
+      <iframe class="viewer-frame" id="viewerFrame"></iframe>
     </div>
     <!-- Welcome -->
     <div class="welcome" id="welcomePanel">
@@ -458,7 +458,7 @@ function openViewer(contentsNum, title) {
       const doc = frame.contentDocument;
       if (frame.contentWindow) {
         frame.contentWindow.Old = function(){};
-        frame.contentWindow.parent = { Old:function(){}, Cts:function(k,a){ openViewer(k,k); }, Tsl:function(){}, document:{ESM:{}} };
+        frame.contentWindow.parent = { Old:function(){}, Cts:function(k,a){ openViewer(k,k); }, Tsl:function(){}, Prt:function(k){ openViewer(k,k); }, Scl:function(){}, Jmp:function(){}, document:{ESM:{}} };
       }
       const style = doc.createElement('style');
       style.textContent = 'body{font-size:14px!important;margin:10px!important;font-family:-apple-system,sans-serif!important;word-wrap:break-word!important}img{max-width:100%!important;height:auto!important}table{max-width:100%!important;font-size:12px!important}svg{max-width:100%!important;height:auto!important}.top_title{font-size:18px!important;font-weight:700!important}';
@@ -549,7 +549,7 @@ function openFromSearch(contentsNum, title) {
       const doc = frame.contentDocument;
       if (frame.contentWindow) {
         frame.contentWindow.Old = function(){};
-        frame.contentWindow.parent = { Old:function(){}, Cts:function(k){ openViewer(k,k); }, Tsl:function(){}, document:{ESM:{}} };
+        frame.contentWindow.parent = { Old:function(){}, Cts:function(k){ openViewer(k,k); }, Tsl:function(){}, Prt:function(k){ openViewer(k,k); }, Scl:function(){}, Jmp:function(){}, document:{ESM:{}} };
       }
       const style = doc.createElement('style');
       style.textContent = 'body{font-size:14px!important;margin:10px!important;font-family:-apple-system,sans-serif!important;word-wrap:break-word!important}img{max-width:100%!important;height:auto!important}table{max-width:100%!important;font-size:12px!important}svg{max-width:100%!important;height:auto!important}';
