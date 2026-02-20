@@ -460,8 +460,19 @@ function openViewer(contentsNum, title) {
         frame.contentWindow.Old = function(){};
         frame.contentWindow.parent = { Old:function(){}, Cts:function(k,a){ openViewer(k,k); }, Tsl:function(){}, Prt:function(k){ openViewer(k,k); }, Scl:function(){}, Jmp:function(){}, document:{ESM:{}} };
       }
+      // Add viewport meta for mobile
+      let vp = doc.querySelector('meta[name=viewport]');
+      if (!vp) { vp = doc.createElement('meta'); vp.name = 'viewport'; doc.head.appendChild(vp); }
+      vp.content = 'width=device-width, initial-scale=1, maximum-scale=5';
       const style = doc.createElement('style');
-      style.textContent = 'body{font-size:14px!important;margin:10px!important;font-family:-apple-system,sans-serif!important;word-wrap:break-word!important}img{max-width:100%!important;height:auto!important}table{max-width:100%!important;font-size:12px!important}svg{max-width:100%!important;height:auto!important}.top_title{font-size:18px!important;font-weight:700!important}';
+      style.textContent = 'body{font-size:14px!important;margin:8px!important;padding:0!important;font-family:-apple-system,sans-serif!important;word-wrap:break-word!important;overflow-x:hidden!important;max-width:100vw!important}
+img,svg,object,embed{max-width:100%!important;height:auto!important}
+table{max-width:100%!important;font-size:11px!important;word-break:break-word!important;table-layout:fixed!important}
+td,th{padding:3px!important;overflow:hidden!important;word-wrap:break-word!important}
+pre{white-space:pre-wrap!important;max-width:100%!important;overflow-x:auto!important}
+.top_title{font-size:16px!important;font-weight:700!important}
+.servinfosub_title{font-size:14px!important}
+*{max-width:100vw!important}';
       doc.head.appendChild(style);
     } catch(e) {}
   };
@@ -551,6 +562,10 @@ function openFromSearch(contentsNum, title) {
         frame.contentWindow.Old = function(){};
         frame.contentWindow.parent = { Old:function(){}, Cts:function(k){ openViewer(k,k); }, Tsl:function(){}, Prt:function(k){ openViewer(k,k); }, Scl:function(){}, Jmp:function(){}, document:{ESM:{}} };
       }
+      // Add viewport meta for mobile
+      let vp = doc.querySelector('meta[name=viewport]');
+      if (!vp) { vp = doc.createElement('meta'); vp.name = 'viewport'; doc.head.appendChild(vp); }
+      vp.content = 'width=device-width, initial-scale=1, maximum-scale=5';
       const style = doc.createElement('style');
       style.textContent = 'body{font-size:14px!important;margin:10px!important;font-family:-apple-system,sans-serif!important;word-wrap:break-word!important}img{max-width:100%!important;height:auto!important}table{max-width:100%!important;font-size:12px!important}svg{max-width:100%!important;height:auto!important}';
       doc.head.appendChild(style);
