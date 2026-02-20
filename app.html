@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Honda FR-V Service Manual</title>
+<title>מדריך שירות הונדה FR-V</title>
 <script src="./he_data.js"></script>
 <style>
 :root {
@@ -39,7 +39,7 @@ html, body { height:100%; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI
   color:white; font-size:12px; font-weight:600; cursor:pointer; margin-left:6px; font-family:inherit;
 }
 .hdr-btn:hover { background:rgba(255,255,255,0.18); }
-.hdr-btn.lang { background:var(--red); }
+
 
 /* === MODEL BAR === */
 .model-bar {
@@ -174,21 +174,20 @@ html, body { height:100%; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI
 <div class="header">
   <div class="logo">H</div>
   <div class="hdr-text">
-    <div class="hdr-title" id="hdrTitle">FR-V Shop Manual</div>
-    <div class="hdr-sub" id="hdrSub">Honda (2004-2009)</div>
+    <div class="hdr-title">מדריך שירות FR-V</div>
+    <div class="hdr-sub">הונדה (2004-2009)</div>
   </div>
-  <button class="hdr-btn lang" id="langBtn" onclick="toggleLang()">עברית</button>
 </div>
 
 <!-- Model selector bar -->
 <div class="model-bar">
-  <label id="lblYear">Year</label>
+  <label>שנה</label>
   <select id="selYear" onchange="onModelChange()">
     <option value="2005">2005</option>
     <option value="2006">2006</option>
     <option value="2007" selected>2007</option>
   </select>
-  <label id="lblCode">Code</label>
+  <label>קוד</label>
   <select id="selCode" onchange="onModelChange()"></select>
   <div class="sep"></div>
   <div class="manual-toggle">
@@ -198,13 +197,13 @@ html, body { height:100%; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI
 </div>
 
 <!-- Main layout -->
-<div class="main" id="mainContainer">
+<div class="main" id="mainContainer" dir="rtl">
   <!-- Sidebar: tree + search -->
   <div class="sidebar" id="sidebar">
     <div class="search-box">
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
-        <input type="text" class="search-input" id="searchInput" placeholder="Search articles..." oninput="onSearch()">
+        <input type="text" class="search-input" id="searchInput" placeholder="חיפוש מאמרים..." oninput="onSearch()">
       </div>
     </div>
     <div class="tree-scroll" id="treeScroll"></div>
@@ -219,7 +218,7 @@ html, body { height:100%; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI
     <!-- Content viewer -->
     <div class="viewer-panel" id="viewerPanel">
       <div class="viewer-bar">
-        <button class="viewer-back" onclick="closeViewer()">◀ <span id="backLabel">Back</span></button>
+        <button class="viewer-back" onclick="closeViewer()">◀ <span>חזור</span></button>
         <div class="viewer-title" id="viewerTitle"></div>
       </div>
       <iframe class="viewer-frame" id="viewerFrame" sandbox="allow-same-origin allow-scripts"></iframe>
@@ -227,8 +226,8 @@ html, body { height:100%; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI
     <!-- Welcome -->
     <div class="welcome" id="welcomePanel">
       <div>
-        <h2 id="welcomeTitle">Select a category</h2>
-        <p id="welcomeText">Choose a system or component from the navigation tree to view service articles.</p>
+        <h2>בחר קטגוריה</h2>
+        <p>בחר מערכת או רכיב מעץ הניווט כדי לצפות במאמרי שירות.</p>
       </div>
     </div>
   </div>
@@ -241,7 +240,7 @@ const codeNames = { 'BE1':'BE1 (1.7L)', 'BE3':'BE3 (2.0L i-VTEC)', 'BE5':'BE5 (2
 
 let currentYear = '2007', currentCode = 'BE1', currentManual = 'SM';
 let treeData = [], articleData = [];
-let lang = 'en';
+const lang = 'he';
 let isMobile = window.innerWidth <= 768;
 
 // === INIT ===
@@ -249,8 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
   updateCodeSelector();
   loadData();
   
-  // Load saved language
-  try { if (localStorage.getItem('esm_lang_he') === '1') { lang = 'he'; applyLang(); } } catch(e) {}
+
 });
 
 window.addEventListener('resize', function() { isMobile = window.innerWidth <= 768; });
@@ -333,7 +331,7 @@ function renderTree() {
   for (let i = 0; i < treeData.length; i++) {
     const it = treeData[i];
     const he = trTree(it.name);
-    const showBoth = lang === 'he' && he !== it.name;
+    const showBoth = he !== it.name;
     
     html += '<div class="tree-item level-' + it.level + '" data-i="' + i + '" onclick="onTreeClick(' + i + ')">';
     if (showBoth) {
@@ -424,7 +422,7 @@ function showArticles(treeName, articles) {
   
   articles.forEach(art => {
     const he = trTitle(art.title);
-    const showBoth = lang === 'he' && he !== art.title;
+    const showBoth = he !== art.title;
     const esc = art.title.replace(/'/g, "\\'");
     
     html += '<div class="article-card" onclick="openViewer(\'' + art.contentsNum + '\',\'' + esc + '\')">';
@@ -447,7 +445,7 @@ function openViewer(contentsNum, title) {
   const ap = document.getElementById('articlesPanel');
   
   const he = trTitle(title);
-  document.getElementById('viewerTitle').textContent = (lang === 'he' && he !== title) ? he : title;
+  document.getElementById('viewerTitle').textContent = (he !== title) ? he : title;
   
   const frame = document.getElementById('viewerFrame');
   frame.src = 'en/html/' + contentsNum + '.html';
@@ -519,7 +517,7 @@ function doSearch() {
   let html = '<div class="count-badge">' + matches.length + ' ' + tr('results') + '</div>';
   matches.slice(0, 80).forEach(art => {
     const he = trTitle(art.title);
-    const showBoth = lang === 'he' && he !== art.title;
+    const showBoth = he !== art.title;
     const esc = art.title.replace(/'/g, "\\'");
     
     html += '<div class="article-card" onclick="openFromSearch(\'' + art.contentsNum + '\',\'' + esc + '\')">';
@@ -542,7 +540,7 @@ function openFromSearch(contentsNum, title) {
   if (isMobile) document.getElementById('contentArea').classList.add('slide-in');
   
   const he = trTitle(title);
-  document.getElementById('viewerTitle').textContent = (lang === 'he' && he !== title) ? he : title;
+  document.getElementById('viewerTitle').textContent = (he !== title) ? he : title;
   
   const frame = document.getElementById('viewerFrame');
   frame.src = 'en/html/' + contentsNum + '.html';
@@ -562,48 +560,24 @@ function openFromSearch(contentsNum, title) {
 
 // === HEBREW TRANSLATION ===
 function trTree(name) {
-  if (lang !== 'he' || typeof TREE_HE === 'undefined') return name;
-  return TREE_HE[name] || name;
+  return (typeof TREE_HE !== 'undefined' && TREE_HE[name]) ? TREE_HE[name] : name;
 }
 
 function trTitle(title) {
-  if (lang !== 'he' || typeof TITLE_HE === 'undefined') return title;
-  return TITLE_HE[title] || title;
+  return (typeof TITLE_HE !== 'undefined' && TITLE_HE[title]) ? TITLE_HE[title] : title;
 }
 
 function tr(key) {
-  if (lang !== 'he') return key;
   const map = {
-    'Year':'שנה','Code':'קוד','articles':'מאמרים','article':'מאמר','results':'תוצאות',
-    'No Articles':'אין מאמרים','No Results':'אין תוצאות','Back':'חזור',
+    'articles':'מאמרים','article':'מאמר','results':'תוצאות',
+    'No Articles':'אין מאמרים','No Results':'אין תוצאות',
     'Try selecting a more specific category.':'נסה לבחור קטגוריה ספציפית יותר.',
-    'Search articles...':'חיפוש מאמרים...','Showing first 80 of':'מציג 80 ראשונים מתוך',
-    'Select a category':'בחר קטגוריה','Choose a system or component from the navigation tree to view service articles.':'בחר מערכת או רכיב מעץ הניווט כדי לצפות במאמרי שירות.'
+    'Showing first 80 of':'מציג 80 ראשונים מתוך'
   };
   return map[key] || key;
 }
 
-function toggleLang() {
-  lang = lang === 'en' ? 'he' : 'en';
-  try { localStorage.setItem('esm_lang_he', lang === 'he' ? '1' : '0'); } catch(e) {}
-  applyLang();
-}
-
-function applyLang() {
-  const isHe = lang === 'he';
-  document.getElementById('langBtn').textContent = isHe ? 'EN' : 'עברית';
-  document.getElementById('mainContainer').setAttribute('dir', isHe ? 'rtl' : 'ltr');
-  document.getElementById('hdrTitle').textContent = isHe ? 'מדריך שירות FR-V' : 'FR-V Shop Manual';
-  document.getElementById('hdrSub').textContent = isHe ? 'הונדה (2004-2009)' : 'Honda (2004-2009)';
-  document.getElementById('lblYear').textContent = tr('Year');
-  document.getElementById('lblCode').textContent = tr('Code');
-  document.getElementById('searchInput').placeholder = tr('Search articles...');
-  document.getElementById('backLabel').textContent = tr('Back');
-  document.getElementById('welcomeTitle').textContent = tr('Select a category');
-  document.getElementById('welcomeText').textContent = tr('Choose a system or component from the navigation tree to view service articles.');
-  
-  renderTree();
-}
+// Hebrew is permanent - no toggle needed
 
 // Mobile back button (browser)
 window.addEventListener('popstate', function() {
