@@ -676,6 +676,19 @@ function openContent(contentsNum, title) {
         .servinfosub_title { font-size:14px!important; margin:10px 0 4px!important; }
       `;
       doc.head.appendChild(style);
+      // Scale down content if wider than viewport
+      setTimeout(function() {
+        try {
+          var cw = doc.body.scrollWidth;
+          var vw = frame.clientWidth;
+          if (cw > vw + 10) {
+            var scale = vw / cw;
+            doc.body.style.transformOrigin = 'top left';
+            doc.body.style.transform = 'scale(' + scale + ')';
+            doc.body.style.width = (100/scale) + '%';
+          }
+        } catch(e) {}
+      }, 500);
     } catch(e) { /* cross-origin, ignore */ }
   };
 }
@@ -783,6 +796,18 @@ function openContentDirect(contentsNum, title) {
         .top_title { font-size:16px!important; font-weight:700!important; }
       `;
       doc.head.appendChild(style);
+      setTimeout(function() {
+        try {
+          var cw = doc.body.scrollWidth;
+          var vw = frame.clientWidth;
+          if (cw > vw + 10) {
+            var scale = vw / cw;
+            doc.body.style.transformOrigin = 'top left';
+            doc.body.style.transform = 'scale(' + scale + ')';
+            doc.body.style.width = (100/scale) + '%';
+          }
+        } catch(e) {}
+      }, 500);
     } catch(e) {}
   };
 }
