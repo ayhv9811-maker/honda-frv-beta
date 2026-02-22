@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<title>Honda FR-V Service Manual</title>
+<title>מדריך שירות הונדה FR-V</title>
+<script src="./he_data.js"></script>
 <style>
   /* Using system fonts for offline/mobile compatibility */
   
@@ -240,7 +241,7 @@
 </div>
 
 <!-- Mobile UI -->
-<div class="mobile-only">
+<div class="mobile-only" dir="rtl">
 
   <!-- Header -->
   <div class="header">
@@ -248,7 +249,6 @@
     <div style="flex:1">
       <div class="header-title">FR-V Shop Manual</div>
       <div class="header-sub">Honda (2004-2009)</div>
-        <button class="lang-btn" id="langBtn" onclick="toggleLang()">עב</button>
   </div>
   </div>
 
@@ -278,7 +278,7 @@
     <div class="panel" id="treePanel">
       <div class="search-box" style="position:relative">
         <span class="search-icon">🔍</span>
-        <input class="search-input" id="searchInput" type="text" placeholder="Search articles..." oninput="onSearch()">
+        <input class="search-input" id="searchInput" type="text" placeholder="חיפוש מאמרים..." oninput="onSearch()">
       </div>
       <div id="treeContainer" class="tree-section">
         <div class="loading"><div class="spinner"></div>Loading...</div>
@@ -344,9 +344,7 @@ const codeNames = {
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
   // Auto-redirect desktop to HONDAESM.HTML
-  if (window.innerWidth > 768 && !window.location.hash.includes('force-mobile')) {
-    // Show the desktop notice, don't auto-redirect
-  }
+
   
   updateModelSelectors();
   loadData();
@@ -599,7 +597,8 @@ function showArticles(title, articles) {
     let html = `<div class="article-count">${articles.length} ${articles.length !== 1 ? tr('articles') : tr('article')}</div>`;
     articles.forEach(art => {
       html += `<div class="article-card" onclick="openContent('${art.contentsNum}', '${art.title.replace(/'/g, "\\'")}')">
-        <div class="article-title">${art.title}</div>
+        <div class="article-title">${translateArticleTitle(art.title)}</div>
+        <div class="article-meta" style="font-size:11px;color:#6b6b80">${translateArticleTitle(art.title) !== art.title ? art.title : ''}</div>
         <div class="article-meta">${art.contentsNum}</div>
       </div>`;
     });
@@ -732,7 +731,8 @@ function doSearch() {
       '<mark style="background:#ffe0e0;padding:0 2px;border-radius:2px">$1</mark>'
     );
     html += `<div class="article-card" onclick="openContentDirect('${art.contentsNum}', '${art.title.replace(/'/g, "\\'")}')">
-      <div class="article-title">${highlighted}</div>
+      <div class="article-title">${translateArticleTitle(art.title)}</div>
+      <div class="article-meta" style="font-size:11px;color:#6b6b80">${art.title}</div>
       <div class="article-meta">${art.contentsNum}</div>
     </div>`;
   });
@@ -803,7 +803,7 @@ const TREE_HE = {"General Information": "מידע כללי", "Specifications": "
 const ART_KEYWORDS_HE = {"Removal and Installation": "פירוק והתקנה", "Removal/Installation": "פירוק/התקנה", "Check and Adjustment": "בדיקה וכוונון", "Symptom Troubleshooting": "איתור תקלות לפי סימפטום", "Circuit Troubleshooting": "איתור תקלות במעגל", "Component Location Index": "מיקום רכיבים", "Circuit Diagram": "תרשים מעגל", "Wiring Diagram Index": "אינדקס תרשימי חיווט", "Wiring Diagram": "תרשים חיווט", "Service Precautions": "אזהרות שירות", "Air Bleeding": "שחרור אוויר", "does not come on": "לא נדלק", "does not work": "לא עובד", "stays on": "נשאר דלוק", "comes on": "נדלק", "Troubleshooting": "איתור תקלות", "Replacement": "החלפה", "Removal": "פירוק", "Installation": "התקנה", "Inspection": "בדיקה", "Adjustment": "כוונון", "Description": "תיאור", "Overhaul": "שיפוץ", "Bleeding": "שחרור אוויר", "Break-in": "הרצה", "Test": "בדיקה", "Check": "בדיקה", "Connectors": "מחברים", "Repair": "תיקון"};
 
 
-let currentLang = 'en';
+const currentLang = 'he';
 
 // UI labels
 const UI_HE = {
@@ -831,62 +831,23 @@ const UI_HE = {
 };
 
 function translateTreeName(name) {
-  if (currentLang !== 'he') return name;
   return TREE_HE[name] || name;
 }
 
 function translateArticleTitle(title) {
-  if (currentLang !== 'he') return title;
-  let translated = title;
-  // First check if the whole title is a tree name
+  if (typeof TITLE_HE !== 'undefined' && TITLE_HE[title]) return TITLE_HE[title];
   if (TREE_HE[title]) return TREE_HE[title];
-  // Apply keyword replacements (longest first - already sorted)
-  for (const [en, he] of Object.entries(ART_KEYWORDS_HE)) {
-    if (translated.includes(en)) {
-      translated = translated.replace(new RegExp(en.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), he);
-    }
-  }
-  return translated;
+  return title;
 }
 
 function tr(key) {
-  if (currentLang !== 'he') return key;
   return UI_HE[key] || key;
 }
 
-function toggleLang() {
-  currentLang = currentLang === 'en' ? 'he' : 'en';
-  document.getElementById('langBtn').textContent = currentLang === 'en' ? 'עב' : 'EN';
-  
-  // Set RTL
-  document.querySelector('.mobile-only').setAttribute('dir', currentLang === 'he' ? 'rtl' : 'ltr');
-  
-  // Update UI labels
-  document.getElementById('lblYear').textContent = tr('Year');
-  document.getElementById('lblModel').textContent = tr('Model');
-  document.getElementById('searchInput').placeholder = tr('Search articles...');
-  document.getElementById('tabTree').innerHTML = '<span class="tab-icon">📂</span>' + tr('Browse');
-  document.getElementById('tabSearch').innerHTML = '<span class="tab-icon">🔍</span>' + tr('Search');
-  
-  // Update header
-  document.querySelector('.header-title').textContent = tr('FR-V Shop Manual');
-  document.querySelector('.header-sub').textContent = tr('Honda (2004-2009)');
-  
-  // Re-render tree
-  renderTree();
-  
-  // Save preference
-  try { localStorage.setItem('esm_lang', currentLang); } catch(e) {}
-}
+// Hebrew is permanent
 
-// Load saved language
-try {
-  const saved = localStorage.getItem('esm_lang');
-  if (saved === 'he') {
-    // Defer toggle to after DOM ready
-    setTimeout(toggleLang, 100);
-  }
-} catch(e) {}
+
+
 
 </script>
 </body>

@@ -1,11 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="he">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="refresh" content="0; url=app.html">
-<title>Honda FR-V ESM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מדריך שירות הונדה FR-V</title>
+<script>
+if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.innerWidth <= 768) {
+  window.location.replace('mobile.html');
+} else {
+  window.location.replace('app.html');
+}
+</script>
 </head>
 <body>
-<p>Redirecting to <a href="app.html">Honda FR-V Service Manual</a>...</p>
+<p>מעביר... <a href="app.html">מחשב</a> | <a href="mobile.html">נייד</a></p>
 </body>
 </html>
