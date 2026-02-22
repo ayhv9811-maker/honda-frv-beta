@@ -662,19 +662,18 @@ function openContent(contentsNum, title) {
       }
       const style = doc.createElement('style');
       style.textContent = `
-        body { 
-          font-size: 14px !important; 
-          margin: 8px !important;
-          font-family: -apple-system, sans-serif !important;
-          overflow-x: auto !important;
-          word-wrap: break-word !important;
-        }
-        img { max-width: 100% !important; height: auto !important; }
-        table { max-width: 100% !important; font-size: 12px !important; }
-        td, th { padding: 4px !important; }
-        .top_title { font-size: 18px !important; font-weight: 700 !important; padding: 8px 0 !important; }
-        .servinfosub_title { font-size: 15px !important; margin: 12px 0 6px !important; }
-        svg { max-width: 100% !important; height: auto !important; }
+        body { font-size:14px!important; margin:6px!important; font-family:-apple-system,sans-serif!important; }
+        img { max-width:100%!important; height:auto!important; display:block!important; }
+        svg,object,embed { max-width:100%!important; height:auto!important; }
+        table.Viewer { display:block!important; width:100%!important; }
+        table.Viewer > tbody { display:block!important; }
+        table.Viewer > tbody > tr { display:flex!important; flex-direction:column!important; }
+        table.Viewer > tbody > tr > td { display:block!important; width:100%!important; padding:4px 0!important; }
+        td[id="graphTd"] { order:-1!important; }
+        table { max-width:100%!important; font-size:12px!important; }
+        col { width:auto!important; }
+        .top_title { font-size:16px!important; font-weight:700!important; padding:6px 0!important; }
+        .servinfosub_title { font-size:14px!important; margin:10px 0 4px!important; }
       `;
       doc.head.appendChild(style);
     } catch(e) { /* cross-origin, ignore */ }
@@ -771,11 +770,17 @@ function openContentDirect(contentsNum, title) {
       }
       const style = doc.createElement('style');
       style.textContent = `
-        body { font-size: 14px !important; margin: 8px !important; font-family: -apple-system, sans-serif !important; word-wrap: break-word !important; }
-        img { max-width: 100% !important; height: auto !important; }
-        table { max-width: 100% !important; font-size: 12px !important; }
-        svg { max-width: 100% !important; height: auto !important; }
-        .top_title { font-size: 18px !important; font-weight: 700 !important; }
+        body { font-size:14px!important; margin:6px!important; font-family:-apple-system,sans-serif!important; }
+        img { max-width:100%!important; height:auto!important; display:block!important; }
+        svg,object,embed { max-width:100%!important; height:auto!important; }
+        table.Viewer { display:block!important; width:100%!important; }
+        table.Viewer > tbody { display:block!important; }
+        table.Viewer > tbody > tr { display:flex!important; flex-direction:column!important; }
+        table.Viewer > tbody > tr > td { display:block!important; width:100%!important; padding:4px 0!important; }
+        td[id="graphTd"] { order:-1!important; }
+        table { max-width:100%!important; font-size:12px!important; }
+        col { width:auto!important; }
+        .top_title { font-size:16px!important; font-weight:700!important; }
       `;
       doc.head.appendChild(style);
     } catch(e) {}
