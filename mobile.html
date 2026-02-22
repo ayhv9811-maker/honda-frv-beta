@@ -656,6 +656,9 @@ function openContent(contentsNum, title) {
         frame.contentWindow.parent = {
           Old: function() {},
           Cts: function(key, anc) { openContentByKey(key, anc); },
+          Prt: function(key) { window.open('en/html/' + key + '.html', '_blank'); },
+          Scl: function() {},
+          Jmp: function() {},
           Tsl: function() {},
           document: { ESM: {} }
         };
@@ -676,26 +679,7 @@ function openContent(contentsNum, title) {
         .servinfosub_title { font-size:14px!important; margin:10px 0 4px!important; }
       `;
       doc.head.appendChild(style);
-      // Auto-scale: watch for content changes and rescale if needed
-      function autoScale() {
-        try {
-          var cw = doc.body.scrollWidth;
-          var vw = frame.clientWidth;
-          if (cw > vw + 5) {
-            var s = vw / cw;
-            doc.body.style.transformOrigin = 'top left';
-            doc.body.style.transform = 'scale(' + s + ')';
-            doc.body.style.width = (100/s) + '%';
-          }
-        } catch(e) {}
-      }
-      autoScale();
-      setTimeout(autoScale, 300);
-      setTimeout(autoScale, 800);
-      setTimeout(autoScale, 2000);
-      try {
-        new MutationObserver(autoScale).observe(doc.body, {childList:true, subtree:true, attributes:true});
-      } catch(e) {}
+
     } catch(e) { /* cross-origin, ignore */ }
   };
 }
@@ -784,6 +768,9 @@ function openContentDirect(contentsNum, title) {
         frame.contentWindow.parent = {
           Old: function() {},
           Cts: function(key) { openContent(key, key); },
+          Prt: function(key) { window.open('en/html/' + key + '.html', '_blank'); },
+          Scl: function() {},
+          Jmp: function() {},
           Tsl: function() {},
           document: { ESM: {} }
         };
@@ -803,25 +790,7 @@ function openContentDirect(contentsNum, title) {
         .top_title { font-size:16px!important; font-weight:700!important; }
       `;
       doc.head.appendChild(style);
-      function autoScale2() {
-        try {
-          var cw = doc.body.scrollWidth;
-          var vw = frame.clientWidth;
-          if (cw > vw + 5) {
-            var s = vw / cw;
-            doc.body.style.transformOrigin = 'top left';
-            doc.body.style.transform = 'scale(' + s + ')';
-            doc.body.style.width = (100/s) + '%';
-          }
-        } catch(e) {}
-      }
-      autoScale2();
-      setTimeout(autoScale2, 300);
-      setTimeout(autoScale2, 800);
-      setTimeout(autoScale2, 2000);
-      try {
-        new MutationObserver(autoScale2).observe(doc.body, {childList:true, subtree:true, attributes:true});
-      } catch(e) {}
+
     } catch(e) {}
   };
 }
